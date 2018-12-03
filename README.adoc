@@ -172,9 +172,11 @@ expressions are case-insensitive while the Go implementation's are not.
 [[see-also]]
 == See Also
 
-Related tools: link:awk(1)[], link:cut(1)[].
+Related tools: *awk(1)*, *cut(1)*.
 
-Original C fex project site: link:http://www.semicomplete.com/projects/fex[]
+Project site: link:https://github.com/nilium/go-fex[]
+
+Original C fex project site: link:https://www.semicomplete.com/projects/fex[]
 
 [[author]]
 == Authors
