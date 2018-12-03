@@ -1,0 +1,13 @@
+# Go temporary files
+*.out
+coverage.txt
+
+# Asciidoc
+*.html
+
+# Editors
+.*.sw[a-z]
+~*
+
+# Macs
+.DS_Store

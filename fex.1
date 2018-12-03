@@ -1,0 +1,239 @@
+'\" t
+.\"     Title: fex
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 1.5.8
+.\"      Date: 2018-12-02
+.\"    Manual: FEX
+.\"    Source: FEX
+.\"  Language: English
+.\"
+.TH "FEX" "1" "2018-12-02" "FEX" "FEX"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+fex \- simple and powerful field extraction
+.SH "SYNOPSIS"
+.sp
+\fBfex\fP \fI<extract>...\fP
+.SH "DESCRIPTION"
+.sp
+fex helps you split things by field. Common tasks you might do with awk or cut
+are much simpler in fex, and there are things in fex you can\(cqt do nearly as easily
+in awk or cut.
+.SH "SELECTOR SYNTAX"
+.sp
+Extract syntax is one or more selectors, formatted as:
+.sp
+.if n .RS 4
+.nf
+<delimiter><field number(s)|regexp>
+.fi
+.if n .RE
+.sp
+Fields start at 1, same as AWK. A field number of 0 selects the whole string,
+unchanged.
+.sp
+You can specify multiple fields with curly braces and numbers split by commas.
+Also valid in curly braces {} are number ranges. Number ranges are similar to
+python array slices, split by colon.
+.sp
+The first delimiter is implied as space (\(aq \(aq), but can be overridden.
+For example, to select the last dash\-separated field, you can use \f(CR\-\-1\fP.
+.sp
+A selector\(cqs field number(s) (or regexp) can be written in the following ways:
+.sp
+\fBa single number (field)\fP
+.RS 4
+.RE
+.sp
+A single number will select that numbered field. Like awk, field start at 1.
+.sp
+Example selecting third field:
+.sp
+.if n .RS 4
+.nf
+% echo "a b c d e" | fex \(aq3\(aq
+c
+.fi
+.if n .RE
+.sp
+Example selecting the second field delimited by slash:
+.sp
+.if n .RS 4
+.nf
+% echo "/home/hello/world" | fex \(aq/2\(aq
+hello
+.fi
+.if n .RE
+.sp
+\fB{N:M} (range)\fP
+.RS 4
+.RE
+.sp
+This is a range selection. The syntax for ranges is, in curly braces, N:M,
+which chooses the fields in range N to M, inclusive.
+.sp
+Example selecting first through fourth fields:
+.sp
+.if n .RS 4
+.nf
+% echo "a b c d e" | fex \(aq{1:4}\(aq
+a b c d
+.fi
+.if n .RE
+.sp
+\fB{N,M,...} (field, field, ...)\fP
+.RS 4
+.RE
+.sp
+The syntax for multiple selections is numbers within curly braces.
+.sp
+Example selecting first and fifth fields:
+.sp
+.if n .RS 4
+.nf
+% echo "a b c d e" | fex \(aq{1,5}\(aq
+a e
+.fi
+.if n .RE
+.sp
+\fB{N:M,I,J,...} (range, field, field, ...)\fP
+.RS 4
+.RE
+.sp
+You can combine any of the above to select ranges and individual fields, in any
+order, with the {...} syntax by delimiting each selection by a comma.
+.sp
+Example selecting fields 1 to 3, and 5: \f(CR{1:3,5}\fP
+.sp
+.if n .RS 4
+.nf
+% echo "a b c d e" | fex \(aq{1:3,5}\(aq
+a b c e
+.fi
+.if n .RE
+.sp
+\fB{?...} (non\-greedy)\fP
+.RS 4
+.RE
+.sp
+The {?...} notation turns on \(aqnon greedy\(aq field separation. The differences here
+can be shown best by example, first:
+.sp
+.if n .RS 4
+.nf
+% echo "1...2.3.4" | fex \(aq.{1:3}\(aq
+1.2.3
+% echo "1...2.3.4" | fex \(aq.{?1:3}\(aq
+1..
+.fi
+.if n .RE
+.sp
+In the first example, fex uses \(aq.\(aq as delimiter and ignores empty fields. In the
+second example (non greedy), it does not ignore those empty fields.
+.sp
+\fB/regexp/ (regular expression)\fP
+.RS 4
+.RE
+.sp
+The /regexp/ selection will choose only fields that match the given pattern.
+.sp
+Example, pulling out words with \(aqaddr:\(aq in it from \(aqifconfig\(aq output:
+.sp
+.if n .RS 4
+.nf
+% printf \(aq%s: addr:%s\(rsn\(aq lo0 127.0.0.1 en0 10.1.0.24 | fex \(aq /addr:[0\-9]/\(aq
+addr:127.0.0.1
+addr:10.1.0.24
+.fi
+.if n .RE
+.sp
+Regular expressions use RE2 syntax and are case\-sensitive by default. You can
+read a reference for RE2 syntax at the site
+.URL "https://github.com/google/re2/wiki/Syntax" "" ""
+.SH "EXAMPLES"
+.sp
+\fBShow the MTU for a given interface\fP
+.RS 4
+.RE
+.sp
+The \(aqMTU\(aq in \f(CRifconfig\fP output looks like \(aqMTU:1500\(aq. So have fex split by
+space, then grab fields matching /mtu:/, split by colon, and choose the last
+field.
+.sp
+.if n .RS 4
+.nf
+% ifconfig wlan0 | fex \(aq/MTU:/:\-1\(aq
+1500
+.fi
+.if n .RE
+.sp
+\fBParse Apache logs\fP
+.RS 4
+.RE
+.sp
+Pull the IP address (first field by space) and the path requested (2nd field in
+\(aqGET <path> ...\(aq).
+.sp
+.if n .RS 4
+.nf
+% fex 1 \(aq"2 2\(aq < /b/logs/access
+65.57.245.11 /
+65.57.245.11 /icons/blank.gif
+65.57.245.11 /icons/folder.gif
+.fi
+.if n .RE
+.SH "CONTACT"
+.sp
+You can file bugs, feature requests, or questions about the Go implementation at
+the following URL:
+.sp
+.URL "https://github.com/nilium/go\-fex/issues" "" ""
+.sp
+Patches, discussion, ideas, issues, and so on are all welcome.
+.sp
+You can send any of the above by email to \c
+.MTO "ncower\(atgmail.com" "" " "
+if you\(cqre more
+comfortable with that.
+.SH "DISCUSSION"
+.sp
+The Go implementation began as an almost\-verbatim translation of the original C
+to Go, with some modifications to adjust extract parsing to support selectors
+like \f(CR\-\-1\fP or \f(CR\-{1}\fP as the initial selector in an abstract.
+.sp
+In addition, it isn\(cqt compatible with the original fex because it uses RE2 for
+regular expressions instead of POSIX regular expressions. Many simple regular
+expressions are still compatible, but if you used regular expressions heavily,
+there may be some tricky pieces to it. For example, the original fex\(cqs regular
+expressions are case\-insensitive while the Go implementation\(cqs are not.
+.SH "SEE ALSO"
+.sp
+Related tools: \c
+.URL "awk(1)" "" ","
+.URL "cut(1)" "" "."
+.sp
+Original C fex project site: \c
+.URL "http://www.semicomplete.com/projects/fex" "" ""
+.SH "AUTHOR"
+.sp
+fex was written by Jordan Sissel.
+.sp
+The Go implementation was written by Noel Cower.
