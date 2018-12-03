@@ -177,7 +177,7 @@ Related tools: link:awk(1)[], link:cut(1)[].
 Original C fex project site: link:http://www.semicomplete.com/projects/fex[]
 
 [[author]]
-== Author
+== Authors
 
 fex was written by Jordan Sissel.
 
