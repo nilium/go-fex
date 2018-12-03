@@ -75,18 +75,18 @@ var testCases = map[string]*TestCase{
 		WantErr: nonEmpty,
 	},
 
-	"HelpShortLong": &TestCase{
-		Args:    []string{`-help`, `1`},
-		Status:  2,
-		Input:   "1 a 2 b 3 c 4 d 5 e",
-		WantErr: nonEmpty,
-	},
-
 	"HelpLong": &TestCase{
 		Args:    []string{`--help`, `1`},
 		Status:  2,
 		Input:   "1 a 2 b 3 c 4 d 5 e",
 		WantErr: nonEmpty,
+	},
+
+	"Version": &TestCase{
+		Args:   []string{"-v"},
+		Status: 0,
+		Input:  "1 a 2 b 3 c 4 d 5 e",
+		Want:   version + "\n",
 	},
 
 	//
