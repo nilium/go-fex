@@ -13,13 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package fex
 
 import (
 	"bytes"
 	"strings"
 	"testing"
 )
+
+const testVersion = "v1.2.3"
 
 // nonEmpty is a special value that indicates an output shouldn't be empty but not what its contents
 // are.
@@ -44,10 +46,11 @@ func (tc *TestCase) Run(t *testing.T) {
 		stderr = new(bytes.Buffer)
 		input  = strings.NewReader(tc.Input)
 		fex    = &Fex{
-			Name:   "fex",
-			Stdin:  input,
-			Stdout: stdout,
-			Stderr: stderr,
+			Name:    "fex",
+			Version: testVersion,
+			Stdin:   input,
+			Stdout:  stdout,
+			Stderr:  stderr,
 		}
 	)
 
@@ -101,7 +104,7 @@ var testCases = map[string]*TestCase{
 		Args:   []string{"-v"},
 		Status: 0,
 		Input:  "1 a 2 b 3 c 4 d 5 e",
-		Want:   version + "\n",
+		Want:   testVersion + "\n",
 	},
 
 	//
