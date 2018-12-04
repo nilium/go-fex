@@ -7,7 +7,7 @@ go:
 
 script:
   - env GO111MODULE=on go build ./cmd/fex
-  - env GO111MODULE=on go test -v -coverprofile=coverage.txt -covermode=atomic ./cmd/fex
+  - env GO111MODULE=on go test -v -coverprofile=coverage.txt -covermode=atomic ./internal/fex
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
