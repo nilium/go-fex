@@ -2,12 +2,12 @@
 .\"     Title: fex
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 1.5.8
-.\"      Date: 2018-12-02
+.\"      Date: 2018-12-06
 .\"    Manual: FEX
 .\"    Source: FEX
 .\"  Language: English
 .\"
-.TH "FEX" "1" "2018-12-02" "FEX" "FEX"
+.TH "FEX" "1" "2018-12-06" "FEX" "FEX"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -129,6 +129,25 @@ Example selecting fields 1 to 3, and 5: \f(CR{1:3,5}\fP
 a b c e
 .fi
 .if n .RE
+.sp
+\fB{<M:N} (reversed)\fP
+.RS 4
+.RE
+.sp
+The {<M:N} notation reverses the output of the fields M:N. This applies only to
+N:M, so you can mix and match to reverse only a subset of fields. For example:
+.sp
+.if n .RS 4
+.nf
+% echo 1 2 3 4 | fex \(aq{<1:\-2,\-1}\(aq
+3 2 1 4
+% echo 1 2 3 4 | fex \(aq{:,<:\-2}\(aq
+1 2 3 4 3 2 1
+.fi
+.if n .RE
+.sp
+In the first example, it selects and reverses all but the last, then prints the
+last field. In the second example, the fields are mirrored.
 .sp
 \fB{?...} (non\-greedy)\fP
 .RS 4

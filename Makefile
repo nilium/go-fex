@@ -10,7 +10,7 @@ test:
 cover:
 	go test -coverprofile=cover.out ./...
 
-fex: cmd/fex/fex.go cmd/fex/fex_test.go VERSION
+fex: cmd/fex/fex.go internal/fex/fex.go internal/fex/fex_test.go VERSION
 	go build -ldflags "-X main.version=$(VERSION)" ./cmd/fex
 
 fex.1: README.adoc

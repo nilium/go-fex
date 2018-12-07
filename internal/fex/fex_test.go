@@ -187,6 +187,26 @@ var testCases = map[string]*TestCase{
 		),
 	},
 
+	"ReverseRelative": &TestCase{
+		Args: []string{`{<-5:-2}`},
+		Input: wantLines(
+			`a b c d e f g`,
+		),
+		Want: wantLines(
+			`f e d c`,
+		),
+	},
+
+	"ReverseAbsolute": &TestCase{
+		Args: []string{`{<1:3,4:}`},
+		Input: wantLines(
+			`a b c d e f g`,
+		),
+		Want: wantLines(
+			`c b a d e f g`,
+		),
+	},
+
 	"ZeroRange": &TestCase{
 		Args: []string{`{0}`, `{0:0}`, `0`},
 		Input: wantLines(

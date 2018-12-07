@@ -258,10 +258,7 @@ func CompileExtractor(arg string) (Extractor, error) {
 				chunks = append(chunks, slice(start-(escapes-1)/2, start+1))
 			}
 
-			for j := len(chunks)/2 - 1; j >= 0; j-- {
-				opp := len(chunks) - 1 - j
-				chunks[j], chunks[opp] = chunks[opp], chunks[j]
-			}
+			reverseStrings(chunks)
 			rx := strings.Join(chunks, "")
 
 			filter, err = NewRegexpFilter(rx)
@@ -378,11 +375,19 @@ func ParseGroup(s string) (Group, error) {
 // The empty FieldRange refers to {0:0}, {0}, or just 0 as a field index
 // (meaning the original string).
 type FieldRange struct {
-	Start int
-	End   int
+	Start   int
+	End     int
+	Reverse bool
 }
 
 func ParseFieldRange(s string) (FieldRange, error) {
+	const reversePrefix = "<"
+
+	reverse := strings.HasPrefix(s, reversePrefix)
+	if reverse {
+		s = s[len(reversePrefix):]
+	}
+
 	n := strings.IndexByte(s, ':')
 	if n == -1 {
 		i, err := strconv.Atoi(s)
@@ -395,11 +400,14 @@ func ParseFieldRange(s string) (FieldRange, error) {
 	var (
 		start, end = s[:n], s[n+1:]
 		err        error
-		f          FieldRange
+		f          = FieldRange{Reverse: reverse}
 	)
 
 	if start == "" && end == "" {
-		return FieldRange{}, nil
+		if reverse {
+			f.Start, f.End = 1, -1
+		}
+		return f, nil
 	} else if start == "" {
 		f.Start = 1
 	} else if f.Start, err = strconv.Atoi(start); err != nil {
@@ -441,6 +449,9 @@ func (r FieldRange) Select(fields []string, zero string) ([]string, error) {
 	}
 	fs := make([]string, end-start)
 	copy(fs, fields[start:])
+	if r.Reverse {
+		reverseStrings(fs)
+	}
 	return fs, nil
 }
 
@@ -527,4 +538,11 @@ func abs(rel, length int) int {
 		rel = length + 1 + rel
 	}
 	return rel
+}
+
+func reverseStrings(s []string) {
+	for j := len(s)/2 - 1; j >= 0; j-- {
+		opp := len(s) - 1 - j
+		s[j], s[opp] = s[opp], s[j]
+	}
 }

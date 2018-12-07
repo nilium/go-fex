@@ -90,6 +90,20 @@ Example selecting fields 1 to 3, and 5: `{1:3,5}`
     a b c e
 --
 
+*{<M:N} (reversed)*::
+--
+The {<M:N} notation reverses the output of the fields M:N. This applies only to
+N:M, so you can mix and match to reverse only a subset of fields. For example:
+
+    % echo 1 2 3 4 | fex '{<1:-2,-1}'
+    3 2 1 4
+    % echo 1 2 3 4 | fex '{:,<:-2}'
+    1 2 3 4 3 2 1
+
+In the first example, it selects and reverses all but the last, then prints the
+last field. In the second example, the fields are mirrored.
+--
+
 *{?...} (non-greedy)*::
 --
 The {?...} notation turns on 'non greedy' field separation. The differences here
