@@ -288,7 +288,33 @@ func CompileExtractor(arg string) (Extractor, error) {
 		}
 
 		sep := " "
-		if i >= 0 {
+		if i > 0 && sr[i-1] == '\\' {
+			switch sr[i] {
+			case '\\':
+				sep = "\\"
+			case 'a':
+				sep = "\a"
+			case 'b':
+				sep = "\b"
+			case 'f':
+				sep = "\f"
+			case 'n':
+				sep = "\n"
+			case 'r':
+				sep = "\r"
+			case 't':
+				sep = "\t"
+			case 'v':
+				sep = "\v"
+			case 'z':
+				sep = "\x00"
+			case 'e':
+				sep = "\x1B"
+			default:
+				sep = slice(i, i+1)
+			}
+			i--
+		} else if i >= 0 {
 			sep = slice(i, i+1)
 		}
 

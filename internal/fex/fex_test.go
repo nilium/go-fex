@@ -127,6 +127,22 @@ var testCases = map[string]*TestCase{
 		),
 	},
 
+	"EscapedSeparators": &TestCase{
+		Args: []string{`\z3`, `\t2`},
+		Input: wantLines(
+			"1\t2\t3\x004\x005",
+			"foo\tbar\tbaz\x00fizz\x00pizza",
+			"\tfoo\x00\tbar\x00\tbaz",
+			"1\x001234\tasdfasd.faw.gfaw.t.23r.1234'lJF#@\x00JJ@#FJJj",
+		),
+		Want: wantLines(
+			"5 2",
+			"pizza bar",
+			"\tbaz bar\x00",
+			"JJ@#FJJj asdfasd.faw.gfaw.t.23r.1234'lJF#@\x00JJ@#FJJj",
+		),
+	},
+
 	"MultiFields": &TestCase{
 		Args: []string{`{1,2,-1}`},
 		Input: wantLines(
